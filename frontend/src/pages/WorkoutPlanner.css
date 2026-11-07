@@ -1,0 +1,571 @@
+
+.planner-page {
+  min-height: 100vh;
+  background: #f4f7fb;
+  color: #172033;
+  font-family: Arial, sans-serif;
+}
+
+.planner-header {
+  height: 75px;
+  padding: 0 7%;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #e7ebf2;
+}
+
+.planner-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #2563eb;
+  font-size: 23px;
+  font-weight: 800;
+}
+
+.planner-back {
+  color: #334155;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.planner-back:hover {
+  color: #2563eb;
+}
+
+.planner-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 24px;
+}
+
+.planner-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.planner-heading > svg {
+  color: #2563eb;
+}
+
+.planner-eyebrow {
+  color: #2563eb;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+}
+
+.planner-heading h1 {
+  font-size: 34px;
+  margin: 10px 0;
+}
+
+.planner-heading p:last-child {
+  color: #64748b;
+  line-height: 1.6;
+}
+
+.planner-message {
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  border-radius: 9px;
+  font-weight: 600;
+}
+
+.planner-error {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.planner-success {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.planner-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 28px;
+}
+
+.planner-stat-card {
+  background: white;
+  padding: 23px;
+  border-radius: 13px;
+  border: 1px solid #e8edf4;
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
+}
+
+.planner-stat-card svg {
+  color: #2563eb;
+  margin-bottom: 12px;
+}
+
+.planner-stat-card span {
+  display: block;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.planner-stat-card h2 {
+  margin: 9px 0 0;
+  font-size: 27px;
+}
+
+.planner-form-card,
+.planner-list-card {
+  background: #ffffff;
+  border: 1px solid #e8edf4;
+  border-radius: 14px;
+  padding: 26px;
+  margin-bottom: 26px;
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
+}
+
+.planner-section-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 24px;
+}
+
+.planner-section-heading h2 {
+  margin: 0 0 7px;
+  font-size: 21px;
+}
+
+.planner-section-heading p {
+  color: #64748b;
+  font-size: 14px;
+  margin: 0;
+}
+
+.planner-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.planner-field {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.planner-field label {
+  font-size: 14px;
+  font-weight: 700;
+  color: #334155;
+}
+
+.planner-field input,
+.planner-field select,
+.planner-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #dce3ed;
+  border-radius: 8px;
+  padding: 12px 13px;
+  font-size: 14px;
+  color: #172033;
+  background: #ffffff;
+  outline: none;
+  font-family: inherit;
+}
+
+.planner-field input:focus,
+.planner-field select:focus,
+.planner-field textarea:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.planner-field textarea {
+  resize: vertical;
+}
+
+.planner-full-width {
+  grid-column: 1 / -1;
+}
+
+.planner-submit {
+  margin-top: 23px;
+  padding: 13px 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.planner-submit:hover {
+  background: #1d4ed8;
+}
+
+.planner-submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.planner-refresh,
+.planner-cancel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: 1px solid #dce3ed;
+  background: #ffffff;
+  color: #334155;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.planner-refresh:hover,
+.planner-cancel:hover {
+  background: #f1f5f9;
+}
+
+.planner-empty {
+  text-align: center;
+  padding: 35px 10px;
+  color: #64748b;
+}
+
+.planner-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.planner-workout-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid #e7ebf2;
+  border-radius: 11px;
+  background: #ffffff;
+}
+
+.planner-workout-icon {
+  width: 45px;
+  height: 45px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eff6ff;
+  color: #2563eb;
+  border-radius: 10px;
+}
+
+.planner-workout-details {
+  flex: 1;
+  min-width: 0;
+}
+
+.planner-workout-details h3 {
+  margin: 0 0 7px;
+  font-size: 17px;
+}
+
+.planner-workout-details > p {
+  color: #64748b;
+  font-size: 14px;
+  margin: 0 0 12px;
+}
+
+.planner-workout-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 17px;
+  color: #475569;
+  font-size: 13px;
+}
+
+.planner-workout-meta span {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.planner-notes {
+  margin-top: 12px !important;
+}
+
+.planner-workout-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.planner-status {
+  background: #dcfce7;
+  color: #15803d;
+  border-radius: 20px;
+  padding: 6px 11px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.planner-workout-actions button {
+  width: 35px;
+  height: 35px;
+  border: 1px solid #dce3ed;
+  background: white;
+  color: #2563eb;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.planner-workout-actions button:hover {
+  background: #eff6ff;
+}
+
+@media (max-width: 768px) {
+  .planner-header {
+    padding: 0 20px;
+  }
+
+  .planner-content {
+    padding: 25px 15px;
+  }
+
+  .planner-heading h1 {
+    font-size: 27px;
+  }
+
+  .planner-stats {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .planner-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .planner-full-width {
+    grid-column: auto;
+  }
+
+  .planner-form-card,
+  .planner-list-card {
+    padding: 18px;
+  }
+
+  .planner-workout-item {
+    flex-wrap: wrap;
+  }
+
+  .planner-workout-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+
+  .planner-section-heading {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 420px) {
+  .planner-brand {
+    font-size: 19px;
+  }
+
+  .planner-back {
+    font-size: 12px;
+  }
+
+  .planner-heading h1 {
+    font-size: 23px;
+  }
+
+  .planner-workout-meta {
+    gap: 10px;
+  }
+}
+
+
+
+/* =====================================
+   WORKOUT CALENDAR
+===================================== */
+
+.planner-calendar-card {
+  background: #ffffff;
+  border: 1px solid #e8edf4;
+  border-radius: 14px;
+  padding: 26px;
+  margin-bottom: 26px;
+  box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
+}
+
+.calendar-navigation {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 25px 0 20px;
+}
+
+.calendar-navigation h3 {
+  margin: 0;
+  font-size: 21px;
+  color: #172033;
+}
+
+.calendar-navigation button {
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eff6ff;
+  color: #2563eb;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.calendar-navigation button:hover {
+  background: #dbeafe;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.calendar-weekdays {
+  margin-bottom: 12px;
+}
+
+.calendar-weekdays div {
+  text-align: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: #64748b;
+  padding: 10px 0;
+}
+
+.calendar-day {
+  min-height: 65px;
+  border: 1px solid #e7ebf2;
+  border-radius: 9px;
+  background: #ffffff;
+  color: #334155;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.calendar-day:hover {
+  background: #eff6ff;
+  border-color: #2563eb;
+}
+
+.calendar-empty {
+  border: none;
+  background: transparent;
+  cursor: default;
+}
+
+.calendar-empty:hover {
+  background: transparent;
+  border: none;
+}
+
+.calendar-selected {
+  background: #2563eb;
+  border-color: #2563eb;
+  color: #ffffff;
+}
+
+.calendar-selected:hover {
+  background: #1d4ed8;
+}
+
+.calendar-today:not(.calendar-selected) {
+  border: 2px solid #2563eb;
+  color: #2563eb;
+}
+
+.calendar-workout-indicator {
+  min-width: 19px;
+  height: 19px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  border-radius: 20px;
+  background: #dcfce7;
+  color: #15803d;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.calendar-selected .calendar-workout-indicator {
+  background: #ffffff;
+  color: #2563eb;
+}
+
+.calendar-selected-workouts {
+  margin-top: 28px;
+  padding-top: 22px;
+  border-top: 1px solid #e7ebf2;
+}
+
+.calendar-selected-workouts > h3 {
+  font-size: 17px;
+  margin: 0 0 18px;
+  color: #172033;
+}
+
+@media (max-width: 600px) {
+  .planner-calendar-card {
+    padding: 16px;
+  }
+
+  .calendar-grid {
+    gap: 4px;
+  }
+
+  .calendar-day {
+    min-height: 49px;
+    font-size: 12px;
+    border-radius: 6px;
+  }
+
+  .calendar-weekdays div {
+    font-size: 11px;
+  }
+
+  .calendar-navigation h3 {
+    font-size: 18px;
+  }
+
+  .calendar-workout-indicator {
+    min-width: 16px;
+    height: 16px;
+    font-size: 10px;
+  }
+}

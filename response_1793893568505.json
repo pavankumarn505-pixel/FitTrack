@@ -1,0 +1,49 @@
+{
+  "start_date": "2026-10-30",
+  "end_date": "2026-11-05",
+  "total_calories": 10000,
+  "daily_breakdown": [
+    {
+      "date": "2026-10-30",
+      "total_workouts": 0,
+      "total_calories": 0,
+      "total_duration": 0
+    },
+    {
+      "date": "2026-10-31",
+      "total_workouts": 0,
+      "total_calories": 0,
+      "total_duration": 0
+    },
+    {
+      "date": "2026-11-01",
+      "total_workouts": 0,
+      "total_calories": 0,
+      "total_duration": 0
+    },
+    {
+      "date": "2026-11-02",
+      "total_workouts": 0,
+      "total_calories": 0,
+      "total_duration": 0
+    },
+    {
+      "date": "2026-11-03",
+      "total_workouts": 0,
+      "total_calories": 0,
+      "total_duration": 0
+    },
+    {
+      "date": "2026-11-04",
+      "total_workouts": 0,
+      "total_calories": 0,
+      "total_duration": 0
+    },
+    {
+      "date": "2026-11-05",
+      "total_workouts": 1,
+      "total_calories": 10000,
+      "total_duration": 1
+    }
+  ]
+}

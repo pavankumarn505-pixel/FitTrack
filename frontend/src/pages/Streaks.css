@@ -1,0 +1,293 @@
+
+.streak-page {
+  min-height: 100vh;
+  background: #f5f7fb;
+  color: #172033;
+  font-family: Arial, sans-serif;
+}
+
+.streak-header {
+  background: #ffffff;
+  padding: 18px 6%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.streak-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.streak-brand-icon {
+  background: #2563eb;
+  color: white;
+  padding: 11px;
+  border-radius: 12px;
+  display: flex;
+}
+
+.streak-brand h1 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.streak-brand p {
+  margin: 4px 0 0;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.streak-back-button,
+.streak-refresh-button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 17px;
+  border: none;
+  border-radius: 8px;
+  background: #2563eb;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.streak-back-button:hover,
+.streak-refresh-button:hover {
+  background: #1d4ed8;
+}
+
+.streak-content {
+  max-width: 1200px;
+  margin: auto;
+  padding: 40px 24px;
+}
+
+.streak-welcome {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(120deg, #172554, #2563eb);
+  color: white;
+  padding: 35px;
+  border-radius: 16px;
+  margin-bottom: 25px;
+}
+
+.streak-eyebrow {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: #bfdbfe;
+}
+
+.streak-welcome h2 {
+  font-size: 30px;
+  margin: 12px 0;
+}
+
+.streak-welcome p {
+  color: #dbeafe;
+  line-height: 1.6;
+}
+
+.streak-welcome-icon {
+  color: #fbbf24;
+  padding: 20px;
+}
+
+.streak-status {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 20px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  margin-bottom: 25px;
+  color: #2563eb;
+}
+
+.streak-status h3 {
+  margin: 0 0 6px;
+  font-size: 16px;
+  color: #172033;
+}
+
+.streak-status p {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+.streak-cards {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.streak-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 25px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+.streak-card-icon {
+  padding: 14px;
+  border-radius: 12px;
+  display: flex;
+  flex-shrink: 0;
+}
+
+.streak-card-icon.orange {
+  background: #fff1e6;
+  color: #ea580c;
+}
+
+.streak-card-icon.purple {
+  background: #f3e8ff;
+  color: #9333ea;
+}
+
+.streak-card-icon.green {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.streak-card-icon.blue {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.streak-card-info h3 {
+  margin: 2px 0 12px;
+  color: #64748b;
+  font-size: 15px;
+}
+
+.streak-value {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.streak-value strong {
+  font-size: 30px;
+  color: #172033;
+}
+
+.streak-value span {
+  font-size: 14px;
+  color: #64748b;
+}
+
+.streak-card-info p {
+  font-size: 13px;
+  color: #94a3b8;
+  margin: 10px 0 0;
+}
+
+.streak-motivation {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: #fff7ed;
+  color: #ea580c;
+  padding: 25px;
+  border-radius: 12px;
+  margin-top: 25px;
+}
+
+.streak-motivation h3 {
+  margin: 0 0 8px;
+  color: #9a3412;
+}
+
+.streak-motivation p {
+  margin: 0;
+  color: #9a3412;
+  line-height: 1.6;
+}
+
+.streak-refresh-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.streak-loading,
+.streak-error-container {
+  min-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+  text-align: center;
+  padding: 20px;
+}
+
+.streak-error-container button {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  background: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.streak-spinner {
+  animation: streak-spin 1s linear infinite;
+}
+
+@keyframes streak-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 650px) {
+  .streak-header {
+    padding: 15px;
+  }
+
+  .streak-content {
+    padding: 25px 15px;
+  }
+
+  .streak-welcome {
+    padding: 25px;
+  }
+
+  .streak-welcome h2 {
+    font-size: 23px;
+  }
+
+  .streak-welcome-icon {
+    display: none;
+  }
+
+  .streak-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .streak-card {
+    padding: 20px;
+  }
+
+  .streak-back-button {
+    padding: 10px;
+    font-size: 12px;
+  }
+}

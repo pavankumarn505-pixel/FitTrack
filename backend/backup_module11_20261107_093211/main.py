@@ -1,0 +1,108 @@
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+
+from app.database import Base, engine
+from app import models
+
+from app.routers import (
+    auth,
+    workouts,
+    progress,
+    goals,
+    analytics,
+    notifications,
+    workout_plans,
+    exercises,
+    streaks
+)
+
+
+# =====================================
+# CREATE DATABASE TABLES
+# =====================================
+
+Base.metadata.create_all(bind=engine)
+
+
+# =====================================
+# CREATE APPLICATION
+# =====================================
+
+app = FastAPI(
+    title="FitTrack - Fitness Management API",
+    description="Fitness and Workout Management Platform",
+    version="1.0.0"
+)
+
+
+# =====================================
+# CORS CONFIGURATION
+# =====================================
+
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
+)
+
+
+# =====================================
+# REGISTER ROUTERS
+# =====================================
+
+# MODULE 1: AUTHENTICATION
+app.include_router(auth.router)
+
+# MODULE 2: WORKOUT MANAGEMENT
+app.include_router(workouts.router)
+
+# MODULE 3: PROGRESS TRACKING
+app.include_router(progress.router)
+
+# MODULE 4: GOAL MANAGEMENT
+app.include_router(goals.router)
+
+# MODULE 5: REPORTS & ANALYTICS
+app.include_router(analytics.router)
+
+# MODULE 6: NOTIFICATIONS
+app.include_router(notifications.router)
+
+# MODULE 7: WORKOUT PLANS & SCHEDULING
+app.include_router(workout_plans.router)
+
+# MODULE 8: EXERCISE LIBRARY
+app.include_router(exercises.router)
+
+# MODULE 10: STREAK TRACKING
+app.include_router(streaks.router)
+
+
+# =====================================
+# ROOT ENDPOINT
+# =====================================
+
+@app.get("/")
+def home():
+    return {
+        "message": "Welcome to FitTrack Fitness Platform API"
+    }
+
+
+# =====================================
+# HEALTH CHECK
+# =====================================
+
+@app.get("/health")
+def health_check():
+    return {
+        "status": "healthy"
+    }

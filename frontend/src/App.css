@@ -1,0 +1,957 @@
+/* ============================= */
+/* GLOBAL RESET */
+/* ============================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  background: #0b1220;
+  color: #ffffff;
+}
+
+/* ============================= */
+/* LOGIN AND REGISTER PAGES */
+/* ============================= */
+
+.auth-container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 30px 16px;
+  background:
+    radial-gradient(circle at top left, #173b35, transparent 40%),
+    radial-gradient(circle at bottom right, #1b2d4d, transparent 40%),
+    #0b1220;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 450px;
+  background: #151f30;
+  border: 1px solid #263449;
+  border-radius: 18px;
+  padding: 38px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.35);
+}
+
+.auth-logo {
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.logo-icon {
+  width: 58px;
+  height: 58px;
+  background: #22c55e;
+  color: #07150c;
+  border-radius: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 12px;
+}
+
+.auth-logo h1 {
+  font-size: 29px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.auth-logo p {
+  color: #94a3b8;
+  font-size: 14px;
+  margin-top: 6px;
+}
+
+.auth-heading {
+  margin-bottom: 25px;
+}
+
+.auth-heading h2 {
+  font-size: 25px;
+  margin-bottom: 8px;
+}
+
+.auth-heading p {
+  color: #94a3b8;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 9px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.input-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #0f1726;
+  border: 1px solid #334155;
+  border-radius: 10px;
+  padding: 0 14px;
+  min-height: 50px;
+  color: #94a3b8;
+  transition: border-color 0.2s;
+}
+
+.input-wrapper:focus-within {
+  border-color: #22c55e;
+}
+
+.input-wrapper input {
+  flex: 1;
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #ffffff;
+  font-size: 14px;
+  padding: 14px 0;
+}
+
+.input-wrapper input::placeholder {
+  color: #64748b;
+}
+
+.password-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+}
+
+.password-toggle:hover {
+  color: #22c55e;
+}
+
+.auth-button {
+  width: 100%;
+  padding: 15px;
+  margin-top: 8px;
+  background: #22c55e;
+  color: #07150c;
+  border: none;
+  border-radius: 10px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.auth-button:hover {
+  background: #16a34a;
+  transform: translateY(-1px);
+}
+
+.auth-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.auth-footer {
+  margin-top: 25px;
+  text-align: center;
+  font-size: 14px;
+  color: #94a3b8;
+}
+
+.auth-footer a {
+  color: #22c55e;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.auth-footer a:hover {
+  text-decoration: underline;
+}
+
+.message {
+  padding: 12px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+
+.error-message {
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid #ef4444;
+  color: #fca5a5;
+}
+
+.success-message {
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid #22c55e;
+  color: #86efac;
+}
+
+/* ============================= */
+/* DASHBOARD */
+/* ============================= */
+
+.dashboard-loading {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #22c55e;
+  font-size: 18px;
+  background: #0b1220;
+}
+
+.dashboard-container {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top right, #142c35, transparent 35%),
+    #0b1220;
+}
+
+.dashboard-header {
+  min-height: 76px;
+  padding: 12px 6%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #111c2c;
+  border-bottom: 1px solid #263449;
+}
+
+.dashboard-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 23px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.dashboard-brand .logo-icon {
+  width: 44px;
+  height: 44px;
+  margin: 0;
+  border-radius: 12px;
+}
+
+.logout-button {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 10px 16px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 9px;
+  color: #e2e8f0;
+  font-size: 14px;
+  font-weight: 600;
+  transition: 0.2s;
+}
+
+.logout-button:hover {
+  background: #7f1d1d;
+  border-color: #ef4444;
+  color: #ffffff;
+}
+
+.dashboard-content {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 45px 24px;
+}
+
+.welcome-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 35px;
+  margin-bottom: 35px;
+  background: linear-gradient(120deg, #153c34, #172b43);
+  border: 1px solid #285044;
+  border-radius: 18px;
+}
+
+.dashboard-eyebrow {
+  color: #4ade80;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+}
+
+.welcome-section h1 {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+.welcome-description {
+  color: #cbd5e1;
+  font-size: 15px;
+}
+
+.profile-icon {
+  width: 64px;
+  height: 64px;
+  min-width: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(34, 197, 94, 0.15);
+  color: #4ade80;
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  border-radius: 50%;
+}
+
+.dashboard-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 22px;
+  margin-bottom: 35px;
+}
+
+.dashboard-card {
+  padding: 26px;
+  background: #151f30;
+  border: 1px solid #263449;
+  border-radius: 15px;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.dashboard-card:hover {
+  transform: translateY(-4px);
+  border-color: #22c55e;
+}
+
+.dashboard-card-icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+  background: rgba(34, 197, 94, 0.12);
+  color: #4ade80;
+  border-radius: 12px;
+}
+
+.dashboard-card h3 {
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+.dashboard-card p {
+  color: #94a3b8;
+  font-size: 14px;
+  margin-bottom: 18px;
+}
+
+.coming-soon {
+  display: inline-block;
+  padding: 6px 11px;
+  background: rgba(34, 197, 94, 0.1);
+  color: #4ade80;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.account-section {
+  padding: 28px;
+  background: #151f30;
+  border: 1px solid #263449;
+  border-radius: 15px;
+}
+
+.account-section h2 {
+  font-size: 20px;
+  margin-bottom: 24px;
+}
+
+.account-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.account-details div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px;
+  background: #0f1726;
+  border: 1px solid #263449;
+  border-radius: 10px;
+}
+
+.account-details span {
+  color: #94a3b8;
+  font-size: 13px;
+}
+
+.account-details strong {
+  color: #ffffff;
+  font-size: 15px;
+  overflow-wrap: anywhere;
+}
+
+/* ============================= */
+/* RESPONSIVE DESIGN */
+/* ============================= */
+
+@media (max-width: 768px) {
+  .dashboard-content {
+    padding: 30px 18px;
+  }
+
+  .dashboard-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .welcome-section {
+    padding: 26px;
+  }
+
+  .welcome-section h1 {
+    font-size: 26px;
+  }
+}
+
+@media (max-width: 550px) {
+  .auth-card {
+    padding: 26px 20px;
+  }
+
+  .auth-heading h2 {
+    font-size: 22px;
+  }
+
+  .dashboard-header {
+    padding: 12px 16px;
+  }
+
+  .dashboard-brand {
+    font-size: 19px;
+  }
+
+  .logout-button {
+    padding: 9px 11px;
+    font-size: 13px;
+  }
+
+  .dashboard-content {
+    padding: 24px 14px;
+  }
+
+  .welcome-section {
+    padding: 22px;
+  }
+
+  .welcome-section h1 {
+    font-size: 23px;
+  }
+
+  .welcome-description {
+    font-size: 13px;
+  }
+
+  .profile-icon {
+    width: 48px;
+    height: 48px;
+    min-width: 48px;
+  }
+
+  .dashboard-cards {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .account-section {
+    padding: 20px;
+  }
+
+  .account-details {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+/* ========================================
+   WORKOUT MANAGEMENT PAGE
+======================================== */
+
+.workout-page {
+  min-height: 100vh;
+  padding: 30px 20px 50px;
+  color: #f8fafc;
+  background: #0b1220;
+}
+
+.workout-header {
+  max-width: 1200px;
+  margin: 0 auto 35px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+}
+
+.workout-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 22px;
+  font-weight: 700;
+  color: #38bdf8;
+}
+
+.back-dashboard {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  color: #e2e8f0;
+  text-decoration: none;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  transition: background 0.2s ease;
+}
+
+.back-dashboard:hover {
+  background: #334155;
+}
+
+.workout-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.workout-heading {
+  margin-bottom: 25px;
+}
+
+.workout-heading h1 {
+  margin: 0 0 8px;
+  font-size: 30px;
+  font-weight: 700;
+}
+
+.workout-heading p {
+  margin: 0;
+  color: #94a3b8;
+  font-size: 15px;
+}
+
+/* Statistics */
+
+.workout-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 25px;
+}
+
+.workout-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 22px;
+  background: #111c2e;
+  border: 1px solid #263449;
+  border-radius: 12px;
+}
+
+.workout-stat-card h3 {
+  margin: 0 0 6px;
+  color: #94a3b8;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.workout-stat-card p {
+  margin: 0;
+  color: #f8fafc;
+  font-size: 25px;
+  font-weight: 700;
+}
+
+/* Form and history cards */
+
+.workout-form-card,
+.workout-history-card {
+  margin-bottom: 25px;
+  padding: 25px;
+  background: #111c2e;
+  border: 1px solid #263449;
+  border-radius: 12px;
+}
+
+.workout-section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin: 0 0 22px;
+  font-size: 19px;
+  font-weight: 650;
+}
+
+.cancel-edit-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  color: #cbd5e1;
+  background: #334155;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+.cancel-edit-button:hover {
+  background: #475569;
+}
+
+.workout-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.workout-form-grid label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #cbd5e1;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.workout-form-grid input,
+.workout-form-grid select {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 12px;
+  color: #f8fafc;
+  background: #0b1220;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  outline: none;
+  font: inherit;
+}
+
+.workout-form-grid input:focus,
+.workout-form-grid select:focus {
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 2px rgb(56 189 248 / 15%);
+}
+
+.workout-form-grid select option {
+  color: #f8fafc;
+  background: #0b1220;
+}
+
+.workout-submit-button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  margin-top: 20px;
+  padding: 10px 20px;
+  color: #082f49;
+  background: #38bdf8;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.workout-submit-button:hover {
+  background: #7dd3fc;
+}
+
+.workout-submit-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Messages */
+
+.workout-error,
+.workout-success {
+  margin: 15px 0;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.workout-error {
+  color: #fecaca;
+  background: rgb(220 38 38 / 12%);
+  border: 1px solid rgb(248 113 113 / 35%);
+}
+
+.workout-success {
+  color: #bbf7d0;
+  background: rgb(22 163 74 / 12%);
+  border: 1px solid rgb(74 222 128 / 35%);
+}
+
+/* Workout history */
+
+.workout-history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.workout-history-header .workout-section-title {
+  margin: 0;
+}
+
+.refresh-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 13px;
+  color: #cbd5e1;
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.refresh-button:hover {
+  background: #334155;
+}
+
+.workout-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.workout-filters select,
+.workout-filters input {
+  min-height: 40px;
+  padding: 8px 12px;
+  color: #e2e8f0;
+  background: #0b1220;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  outline: none;
+}
+
+.workout-empty {
+  padding: 35px 15px;
+  color: #94a3b8;
+  text-align: center;
+}
+
+.workout-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.workout-table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap;
+}
+
+.workout-table th,
+.workout-table td {
+  padding: 14px 12px;
+  text-align: left;
+  border-bottom: 1px solid #263449;
+}
+
+.workout-table th {
+  color: #94a3b8;
+  font-size: 12px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.workout-table td {
+  color: #e2e8f0;
+  font-size: 14px;
+}
+
+.workout-table tbody tr:hover {
+  background: rgb(51 65 85 / 20%);
+}
+
+.category-badge {
+  display: inline-block;
+  padding: 5px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.category-badge.cardio {
+  color: #7dd3fc;
+  background: rgb(14 165 233 / 15%);
+}
+
+.category-badge.strength {
+  color: #c4b5fd;
+  background: rgb(139 92 246 / 15%);
+}
+
+.category-badge.yoga {
+  color: #86efac;
+  background: rgb(34 197 94 / 15%);
+}
+
+.workout-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.edit-workout-button,
+.delete-workout-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 7px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.edit-workout-button {
+  color: #7dd3fc;
+  background: rgb(14 165 233 / 15%);
+}
+
+.edit-workout-button:hover {
+  background: rgb(14 165 233 / 28%);
+}
+
+.delete-workout-button {
+  color: #fca5a5;
+  background: rgb(220 38 38 / 15%);
+}
+
+.delete-workout-button:hover {
+  background: rgb(220 38 38 / 28%);
+}
+
+/* Responsive layout */
+
+@media (max-width: 768px) {
+  .workout-page {
+    padding: 20px 14px 35px;
+  }
+
+  .workout-header {
+    align-items: flex-start;
+    flex-direction: column;
+    margin-bottom: 25px;
+  }
+
+  .workout-heading h1 {
+    font-size: 25px;
+  }
+
+  .workout-stats {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .workout-form-card,
+  .workout-history-card {
+    padding: 18px;
+  }
+
+  .workout-form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .workout-history-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 420px) {
+  .workout-section-title {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .workout-filters {
+    flex-direction: column;
+  }
+
+  .workout-filters select,
+  .workout-filters input {
+    width: 100%;
+  }
+
+  .workout-stat-card {
+    padding: 17px;
+  }
+}
+
+
+/* Workout Dashboard Navigation */
+
+.workout-dashboard-card {
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.workout-dashboard-card:hover {
+  transform: translateY(-5px);
+  border-color: #38bdf8;
+}
+
+.workout-dashboard-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 15px;
+  padding: 10px 16px;
+  color: #082f49;
+  background: #38bdf8;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.workout-dashboard-button:hover {
+  background: #7dd3fc;
+}
