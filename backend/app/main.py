@@ -1,3 +1,4 @@
+﻿
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
@@ -15,7 +16,12 @@ from app.routers import (
     exercises,
     streaks,
     achievements,
-    dashboard
+    dashboard,
+    meals,
+    water,
+    ai_suggestions,
+    health_integrations,
+    reminders
 )
 
 
@@ -92,6 +98,21 @@ app.include_router(achievements.router)
 # MODULE 12: PERSONALIZED DASHBOARD
 app.include_router(dashboard.router)
 
+# MODULE 13: NUTRITION & MEAL TRACKING
+app.include_router(meals.router)
+
+# MODULE 14: WATER TRACKING
+app.include_router(water.router)
+
+# MODULE 15: AI WORKOUT SUGGESTIONS
+app.include_router(ai_suggestions.router)
+
+# MODULE 17: HEALTH INTEGRATIONS
+app.include_router(health_integrations.router)
+
+# MODULE 19: REMINDERS
+app.include_router(reminders.router)
+
 
 # =====================================
 # ROOT ENDPOINT
@@ -113,3 +134,5 @@ def health_check():
     return {
         "status": "healthy"
     }
+
+

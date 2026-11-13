@@ -49,6 +49,8 @@ function Register() {
         username: formData.username.trim(),
         email: formData.email.trim(),
         password: formData.password,
+        timezone:
+          Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC",
       });
 
       if (response.status === 201) {

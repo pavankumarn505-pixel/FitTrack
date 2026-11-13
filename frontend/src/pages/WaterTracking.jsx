@@ -1,0 +1,754 @@
+﻿
+import { useCallback, useEffect, useState } from "react";
+import {
+  Droplets,
+  Plus,
+  Pencil,
+  Trash2,
+  CalendarDays,
+  X,
+  RefreshCw,
+  GlassWater,
+  Target,
+  CheckCircle2,
+} from "lucide-react";
+
+import api from "../api/axios";
+import "./WaterTracking.css";
+
+const initialForm = {
+  quantity: "",
+  date: "",
+};
+
+const getToday = () => {
+  const today = new Date();
+  const offset = today.getTimezoneOffset();
+
+  return new Date(today.getTime() - offset * 60000)
+    .toISOString()
+    .slice(0, 10);
+};
+
+function WaterTracking() {
+  const [records, setRecords] = useState([]);
+
+  const [summary, setSummary] = useState({
+    date: getToday(),
+    total_water: 0,
+    daily_goal: 2000,
+    remaining_water: 2000,
+    progress_percentage: 0,
+  });
+
+  const [selectedDate, setSelectedDate] = useState(getToday());
+
+  const [form, setForm] = useState({
+    ...initialForm,
+    date: getToday(),
+  });
+
+  const [editingId, setEditingId] = useState(null);
+
+  const [showForm, setShowForm] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+
+  // =====================================
+  // ERROR HANDLING
+  // =====================================
+
+  const getErrorMessage = (err) => {
+    const detail = err.response?.data?.detail;
+
+    if (Array.isArray(detail)) {
+      return detail.map((item) => item.msg).join(", ");
+    }
+
+    return (
+      detail ||
+      err.message ||
+      "Something went wrong. Please try again."
+    );
+  };
+
+  // =====================================
+  // FETCH WATER RECORDS
+  // =====================================
+
+  const fetchRecords = useCallback(async () => {
+    const response = await api.get("/water/");
+
+    setRecords(response.data);
+  }, []);
+
+  // =====================================
+  // FETCH DAILY SUMMARY
+  // =====================================
+
+  const fetchSummary = useCallback(async () => {
+    const response = await api.get("/water/daily-summary", {
+      params: {
+        summary_date: selectedDate,
+      },
+    });
+
+    setSummary(response.data);
+  }, [selectedDate]);
+
+  // =====================================
+  // LOAD DATA
+  // =====================================
+
+  const loadData = useCallback(async () => {
+    setLoading(true);
+    setError("");
+
+    try {
+      await Promise.all([
+        fetchRecords(),
+        fetchSummary(),
+      ]);
+    } catch (err) {
+      setError(getErrorMessage(err));
+    } finally {
+      setLoading(false);
+    }
+  }, [fetchRecords, fetchSummary]);
+
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
+
+  // =====================================
+  // FORM INPUT CHANGE
+  // =====================================
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    setForm((previous) => ({
+      ...previous,
+      [name]: value,
+    }));
+  };
+
+  // =====================================
+  // RESET FORM
+  // =====================================
+
+  const resetForm = () => {
+    setForm({
+      quantity: "",
+      date: selectedDate,
+    });
+
+    setEditingId(null);
+    setShowForm(false);
+  };
+
+  // =====================================
+  // ADD / UPDATE WATER RECORD
+  // =====================================
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const quantity = Number(form.quantity);
+
+    if (
+      !Number.isInteger(quantity) ||
+      quantity <= 0 ||
+      quantity > 10000
+    ) {
+      setError(
+        "Water quantity must be a whole number between 1 and 10,000 ml."
+      );
+      return;
+    }
+
+    if (!form.date) {
+      setError("Please select a date.");
+      return;
+    }
+
+    setSaving(true);
+    setError("");
+    setMessage("");
+
+    const waterData = {
+      quantity,
+      date: form.date,
+    };
+
+    try {
+      if (editingId !== null) {
+        await api.put(
+          `/water/${editingId}`,
+          waterData
+        );
+
+        setMessage("Water record updated successfully!");
+      } else {
+        await api.post("/water/", waterData);
+
+        setMessage("Water intake added successfully!");
+      }
+
+      const updatedDate = form.date;
+
+      setSelectedDate(updatedDate);
+
+      setForm({
+        quantity: "",
+        date: updatedDate,
+      });
+
+      setEditingId(null);
+      setShowForm(false);
+
+      // Refresh records and summary for the saved date.
+      const [recordsResponse, summaryResponse] =
+        await Promise.all([
+          api.get("/water/"),
+          api.get("/water/daily-summary", {
+            params: {
+              summary_date: updatedDate,
+            },
+          }),
+        ]);
+
+      setRecords(recordsResponse.data);
+      setSummary(summaryResponse.data);
+    } catch (err) {
+      setError(getErrorMessage(err));
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  // =====================================
+  // EDIT WATER RECORD
+  // =====================================
+
+  const handleEdit = (record) => {
+    setForm({
+      quantity: String(record.quantity),
+      date: record.date,
+    });
+
+    setEditingId(record.id);
+    setShowForm(true);
+
+    setError("");
+    setMessage("");
+
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
+
+  // =====================================
+  // DELETE WATER RECORD
+  // =====================================
+
+  const handleDelete = async (waterId) => {
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this water record?"
+    );
+
+    if (!confirmed) return;
+
+    setError("");
+    setMessage("");
+
+    try {
+      await api.delete(`/water/${waterId}`);
+
+      setMessage("Water record deleted successfully!");
+
+      await loadData();
+    } catch (err) {
+      setError(getErrorMessage(err));
+    }
+  };
+
+  // =====================================
+  // DATE FORMATTING
+  // =====================================
+
+  const formatDate = (value) => {
+    if (!value) return "";
+
+    const [year, month, day] = value
+      .slice(0, 10)
+      .split("-")
+      .map(Number);
+
+    return new Date(
+      year,
+      month - 1,
+      day
+    ).toLocaleDateString(undefined, {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    });
+  };
+
+  // =====================================
+  // FILTER RECORDS BY SELECTED DATE
+  // =====================================
+
+  const dailyRecords = records.filter(
+    (record) =>
+      String(record.date).slice(0, 10) === selectedDate
+  );
+
+  const progress = Math.max(
+    0,
+    Math.min(
+      Number(summary.progress_percentage || 0),
+      100
+    )
+  );
+
+  const goalCompleted =
+    Number(summary.total_water || 0) >=
+    Number(summary.daily_goal || 2000);
+
+  // =====================================
+  // PAGE UI
+  // =====================================
+
+  return (
+    <div className="water-page">
+
+      {/* PAGE HEADER */}
+
+      <div className="water-header">
+        <div>
+          <div className="water-heading-icon">
+            <Droplets size={28} />
+          </div>
+
+          <h1>Water Tracking</h1>
+
+          <p>
+            Stay hydrated and monitor your daily water intake.
+          </p>
+        </div>
+
+        <button
+          type="button"
+          className="water-add-button"
+          onClick={() => {
+            if (showForm && editingId === null) {
+              resetForm();
+            } else {
+              setForm({
+                quantity: "",
+                date: selectedDate,
+              });
+
+              setEditingId(null);
+              setShowForm(true);
+              setError("");
+              setMessage("");
+            }
+          }}
+        >
+          {showForm && editingId === null ? (
+            <X size={18} />
+          ) : (
+            <Plus size={18} />
+          )}
+
+          {showForm && editingId === null
+            ? "Close"
+            : "Add Water"}
+        </button>
+      </div>
+
+      {/* ALERT MESSAGES */}
+
+      {error && (
+        <div className="water-alert water-error">
+          {error}
+        </div>
+      )}
+
+      {message && (
+        <div className="water-alert water-success">
+          {message}
+        </div>
+      )}
+
+      {/* DATE FILTER */}
+
+      <div className="water-date-filter">
+        <CalendarDays size={20} />
+
+        <label htmlFor="water-summary-date">
+          Daily Summary
+        </label>
+
+        <input
+          id="water-summary-date"
+          type="date"
+          value={selectedDate}
+          onChange={(e) => {
+            setSelectedDate(e.target.value);
+            setMessage("");
+            setError("");
+          }}
+        />
+
+        <button
+          type="button"
+          className="water-refresh-button"
+          onClick={loadData}
+          title="Refresh water records"
+        >
+          <RefreshCw size={17} />
+        </button>
+      </div>
+
+      {/* WATER SUMMARY */}
+
+      <div className="water-summary-grid">
+
+        <div className="water-summary-card water-total-card">
+          <div className="water-summary-icon">
+            <Droplets size={23} />
+          </div>
+
+          <p>Total Water Intake</p>
+
+          <h2>
+            {Number(summary.total_water || 0).toLocaleString()}
+          </h2>
+
+          <span>ml</span>
+        </div>
+
+        <div className="water-summary-card water-goal-card">
+          <div className="water-summary-icon">
+            <Target size={23} />
+          </div>
+
+          <p>Daily Water Goal</p>
+
+          <h2>
+            {Number(summary.daily_goal || 0).toLocaleString()}
+          </h2>
+
+          <span>ml</span>
+        </div>
+
+        <div className="water-summary-card water-remaining-card">
+          <div className="water-summary-icon">
+            <GlassWater size={23} />
+          </div>
+
+          <p>Remaining Water</p>
+
+          <h2>
+            {Number(summary.remaining_water || 0).toLocaleString()}
+          </h2>
+
+          <span>ml</span>
+        </div>
+
+        <div className="water-summary-card water-progress-card">
+          <div className="water-summary-icon">
+            <CheckCircle2 size={23} />
+          </div>
+
+          <p>Daily Progress</p>
+
+          <h2>
+            {Number(
+              summary.progress_percentage || 0
+            ).toFixed(1)}
+            %
+          </h2>
+
+          <span>completed</span>
+        </div>
+
+      </div>
+
+      {/* WATER PROGRESS */}
+
+      <div className="water-progress-section">
+
+        <div className="water-progress-heading">
+          <div>
+            <h2>Daily Hydration Progress</h2>
+
+            <p>
+              {goalCompleted
+                ? "Congratulations! You reached your daily water goal."
+                : "Keep drinking water to reach your daily goal."}
+            </p>
+          </div>
+
+          <strong>
+            {Number(summary.total_water || 0).toLocaleString()}
+            {" / "}
+            {Number(summary.daily_goal || 0).toLocaleString()}
+            {" ml"}
+          </strong>
+        </div>
+
+        <div
+          className="water-progress-track"
+          role="progressbar"
+          aria-valuenow={progress}
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-label="Daily water goal progress"
+        >
+          <div
+            className="water-progress-fill"
+            style={{
+              width: `${progress}%`,
+            }}
+          />
+        </div>
+
+        <div className="water-progress-footer">
+          <span>
+            {Number(summary.progress_percentage || 0).toFixed(1)}% completed
+          </span>
+
+          <span>
+            {goalCompleted
+              ? "Daily goal achieved!"
+              : `${Number(summary.remaining_water || 0).toLocaleString()} ml remaining`}
+          </span>
+        </div>
+
+      </div>
+
+      {/* ADD / EDIT WATER FORM */}
+
+      {showForm && (
+        <div className="water-form-card">
+
+          <div className="water-form-heading">
+            <div>
+              <h2>
+                {editingId !== null
+                  ? "Update Water Intake"
+                  : "Add Water Intake"}
+              </h2>
+
+              <p>
+                Enter the quantity and date of your water intake.
+              </p>
+            </div>
+
+            <button
+              type="button"
+              className="water-close-button"
+              onClick={resetForm}
+              title="Close form"
+            >
+              <X size={20} />
+            </button>
+          </div>
+
+          <form onSubmit={handleSubmit}>
+
+            <div className="water-form-grid">
+
+              <div className="water-field">
+                <label htmlFor="water-quantity">
+                  Water Quantity (ml)
+                </label>
+
+                <input
+                  id="water-quantity"
+                  type="number"
+                  name="quantity"
+                  min="1"
+                  max="10000"
+                  step="1"
+                  placeholder="Example: 250"
+                  value={form.quantity}
+                  onChange={handleInputChange}
+                  required
+                />
+
+                <small>
+                  Enter a whole number between 1 and 10,000 ml.
+                </small>
+              </div>
+
+              <div className="water-field">
+                <label htmlFor="water-date">
+                  Intake Date
+                </label>
+
+                <input
+                  id="water-date"
+                  type="date"
+                  name="date"
+                  value={form.date}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+
+            </div>
+
+            <div className="water-form-actions">
+
+              <button
+                type="button"
+                className="water-cancel-button"
+                onClick={resetForm}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="submit"
+                className="water-submit-button"
+                disabled={saving}
+              >
+                {saving
+                  ? "Saving..."
+                  : editingId !== null
+                    ? "Update Water"
+                    : "Save Water"}
+              </button>
+
+            </div>
+
+          </form>
+        </div>
+      )}
+
+      {/* WATER RECORD LIST */}
+
+      <div className="water-list-section">
+
+        <div className="water-list-heading">
+          <div>
+            <h2>My Water Records</h2>
+
+            <p>
+              Water intake recorded for {formatDate(selectedDate)}.
+            </p>
+          </div>
+
+          <span className="water-count">
+            {dailyRecords.length} Records
+          </span>
+        </div>
+
+        {loading ? (
+          <div className="water-empty-state">
+            Loading water records...
+          </div>
+        ) : dailyRecords.length === 0 ? (
+          <div className="water-empty-state">
+
+            <Droplets size={42} />
+
+            <h3>No water records found</h3>
+
+            <p>
+              Start tracking your hydration by adding your first water record.
+            </p>
+
+            <button
+              type="button"
+              className="water-add-button"
+              onClick={() => {
+                setForm({
+                  quantity: "",
+                  date: selectedDate,
+                });
+
+                setEditingId(null);
+                setShowForm(true);
+              }}
+            >
+              <Plus size={18} />
+              Add Your First Record
+            </button>
+
+          </div>
+        ) : (
+          <div className="water-list">
+
+            {dailyRecords.map((record) => (
+              <div
+                className="water-item"
+                key={record.id}
+              >
+
+                <div className="water-item-icon">
+                  <GlassWater size={24} />
+                </div>
+
+                <div className="water-item-details">
+
+                  <span className="water-type">
+                    Water Intake
+                  </span>
+
+                  <h3>
+                    {Number(record.quantity).toLocaleString()} ml
+                  </h3>
+
+                  <p className="water-created">
+                    {formatDate(String(record.date))}
+                  </p>
+
+                </div>
+
+                <div className="water-item-actions">
+
+                  <button
+                    type="button"
+                    className="water-edit-button"
+                    onClick={() => handleEdit(record)}
+                    title="Edit water record"
+                  >
+                    <Pencil size={17} />
+                  </button>
+
+                  <button
+                    type="button"
+                    className="water-delete-button"
+                    onClick={() => handleDelete(record.id)}
+                    title="Delete water record"
+                  >
+                    <Trash2 size={17} />
+                  </button>
+
+                </div>
+
+              </div>
+            ))}
+
+          </div>
+        )}
+
+      </div>
+
+    </div>
+  );
+}
+
+export default WaterTracking;
+

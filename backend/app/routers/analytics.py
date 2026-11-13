@@ -8,7 +8,7 @@ from sqlalchemy.orm import Session
 
 from app.database import get_db
 from app.dependencies import get_current_user
-from app.models import Workout
+from app.models import Workout, Goal
 
 
 router = APIRouter(
@@ -519,3 +519,334 @@ def get_performance_trends(
         total_duration=sum(w.duration for w in workouts),
         daily_breakdown=daily
     )
+
+# =====================================
+# MODULE 18: ADVANCED ANALYTICS
+# =====================================
+
+class GoalAnalyticsResponse(BaseModel):
+    total_goals: int
+    completed_goals: int
+    in_progress_goals: int
+    overdue_goals: int
+    not_started_goals: int
+    completion_rate: float
+
+
+class ConsistencyAnalyticsResponse(BaseModel):
+    start_date: date
+    end_date: date
+    observation_days: int
+    active_days: int
+    inactive_days: int
+    consistency_percentage: float
+    total_workouts: int
+    average_workouts_per_week: float
+
+
+class PerformanceInsightsResponse(BaseModel):
+    insights: list[str]
+
+
+class AdvancedAnalyticsResponse(BaseModel):
+    weekly: WeeklyReport
+    monthly: MonthlyReport
+    goals: GoalAnalyticsResponse
+    consistency: ConsistencyAnalyticsResponse
+    insights: PerformanceInsightsResponse
+
+
+# =====================================
+# HELPER: DETERMINE GOAL STATUS
+# =====================================
+
+def get_analytics_goal_status(goal, today):
+
+    if goal.goal_type == "Weight Loss":
+
+        if goal.current_value <= goal.target_value:
+            return "COMPLETED"
+
+    else:
+
+        if goal.current_value >= goal.target_value:
+            return "COMPLETED"
+
+    if goal.deadline < today:
+        return "OVERDUE"
+
+    if goal.current_value > 0:
+        return "IN_PROGRESS"
+
+    return "NOT_STARTED"
+
+
+# =====================================
+# HELPER: BUILD GOAL ANALYTICS
+# =====================================
+
+def build_goal_analytics(db, user_id):
+
+    today = date.today()
+
+    goals = (
+        db.query(Goal)
+        .filter(Goal.user_id == user_id)
+        .all()
+    )
+
+    total = len(goals)
+
+    statuses = [
+        get_analytics_goal_status(goal, today)
+        for goal in goals
+    ]
+
+    completed = statuses.count("COMPLETED")
+    in_progress = statuses.count("IN_PROGRESS")
+    overdue = statuses.count("OVERDUE")
+    not_started = statuses.count("NOT_STARTED")
+
+    completion_rate = (
+        round((completed / total) * 100, 2)
+        if total > 0 else 0.0
+    )
+
+    return GoalAnalyticsResponse(
+        total_goals=total,
+        completed_goals=completed,
+        in_progress_goals=in_progress,
+        overdue_goals=overdue,
+        not_started_goals=not_started,
+        completion_rate=completion_rate
+    )
+
+
+# =====================================
+# HELPER: BUILD CONSISTENCY ANALYTICS
+# =====================================
+
+def build_consistency_analytics(db, user_id):
+
+    today = date.today()
+
+    observation_days = 30
+    start_date = today - timedelta(days=observation_days - 1)
+
+    workouts = fetch_user_workouts(
+        db,
+        user_id,
+        start_date,
+        today
+    )
+
+    active_dates = {
+        workout.workout_date
+        for workout in workouts
+    }
+
+    active_days = len(active_dates)
+
+    inactive_days = observation_days - active_days
+
+    consistency_percentage = round(
+        (active_days / observation_days) * 100,
+        2
+    )
+
+    average_workouts_per_week = round(
+        len(workouts) / (observation_days / 7),
+        2
+    )
+
+    return ConsistencyAnalyticsResponse(
+        start_date=start_date,
+        end_date=today,
+        observation_days=observation_days,
+        active_days=active_days,
+        inactive_days=inactive_days,
+        consistency_percentage=consistency_percentage,
+        total_workouts=len(workouts),
+        average_workouts_per_week=average_workouts_per_week
+    )
+
+
+# =====================================
+# HELPER: BUILD PERFORMANCE INSIGHTS
+# =====================================
+
+def build_performance_insights(goals, consistency):
+
+    insights = []
+
+    if consistency.total_workouts == 0:
+
+        insights.append(
+            "No workouts were recorded in the last 30 days. "
+            "Start logging workouts to track your performance."
+        )
+
+    elif consistency.active_days >= 15:
+
+        insights.append(
+            f"You recorded workouts on {consistency.active_days} "
+            "different days in the last 30 days. "
+            "Keep maintaining your activity."
+        )
+
+    else:
+
+        insights.append(
+            f"You recorded workouts on {consistency.active_days} "
+            "of the last 30 days. "
+            "Consider building a more regular workout routine."
+        )
+
+    if goals.total_goals == 0:
+
+        insights.append(
+            "You have not created any fitness goals yet. "
+            "Create a goal to track your progress."
+        )
+
+    else:
+
+        insights.append(
+            f"You have completed {goals.completed_goals} "
+            f"out of {goals.total_goals} fitness goals."
+        )
+
+        if goals.overdue_goals > 0:
+
+            insights.append(
+                f"You have {goals.overdue_goals} overdue goals. "
+                "Review their targets and deadlines."
+            )
+
+        if goals.completion_rate == 100:
+
+            insights.append(
+                "Excellent work! All your current goals are completed."
+            )
+
+    return PerformanceInsightsResponse(
+        insights=insights
+    )
+
+
+# =====================================
+# MODULE 18.1: GOAL COMPLETION ANALYTICS
+# =====================================
+
+@router.get(
+    "/goals",
+    response_model=GoalAnalyticsResponse
+)
+def get_advanced_goal_analytics(
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+
+    return build_goal_analytics(
+        db,
+        current_user.id
+    )
+
+
+# =====================================
+# MODULE 18.2: WORKOUT CONSISTENCY
+# =====================================
+
+@router.get(
+    "/consistency",
+    response_model=ConsistencyAnalyticsResponse
+)
+def get_workout_consistency(
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+
+    return build_consistency_analytics(
+        db,
+        current_user.id
+    )
+
+
+# =====================================
+# MODULE 18.3: PERFORMANCE INSIGHTS
+# =====================================
+
+@router.get(
+    "/insights",
+    response_model=PerformanceInsightsResponse
+)
+def get_advanced_performance_insights(
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+
+    goals = build_goal_analytics(
+        db,
+        current_user.id
+    )
+
+    consistency = build_consistency_analytics(
+        db,
+        current_user.id
+    )
+
+    return build_performance_insights(
+        goals,
+        consistency
+    )
+
+
+# =====================================
+# MODULE 18.4: CONSOLIDATED ANALYTICS
+# =====================================
+
+@router.get(
+    "/advanced",
+    response_model=AdvancedAnalyticsResponse
+)
+def get_advanced_analytics(
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user)
+):
+
+    weekly = get_weekly_report(
+        start_date=None,
+        db=db,
+        current_user=current_user
+    )
+
+    monthly = get_monthly_report(
+        year=None,
+        month=None,
+        db=db,
+        current_user=current_user
+    )
+
+    goals = build_goal_analytics(
+        db,
+        current_user.id
+    )
+
+    consistency = build_consistency_analytics(
+        db,
+        current_user.id
+    )
+
+    insights = build_performance_insights(
+        goals,
+        consistency
+    )
+
+    return AdvancedAnalyticsResponse(
+        weekly=weekly,
+        monthly=monthly,
+        goals=goals,
+        consistency=consistency,
+        insights=insights
+    )
+

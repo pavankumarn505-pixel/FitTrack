@@ -1,6 +1,6 @@
-
 from datetime import date, datetime, time
 from typing import Literal
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 from pydantic import (
     BaseModel,
@@ -8,9 +8,11 @@ from pydantic import (
     Field,
     ConfigDict,
     model_validator,
+    field_validator,
     computed_field
 )
 
+Date = date
 
 # ==============================
 # USER SCHEMAS
@@ -20,6 +22,17 @@ class UserRegister(BaseModel):
     username: str = Field(min_length=3, max_length=50)
     email: EmailStr
     password: str = Field(min_length=8, max_length=72)
+    timezone: str = Field(default="UTC", min_length=1, max_length=64)
+
+    @field_validator("timezone")
+    @classmethod
+    def validate_timezone(cls, value: str) -> str:
+        try:
+            ZoneInfo(value)
+        except (ZoneInfoNotFoundError, ValueError):
+            raise ValueError("timezone must be a valid IANA timezone")
+
+        return value
 
 
 class UserLogin(BaseModel):
@@ -31,6 +44,7 @@ class UserResponse(BaseModel):
     id: int
     username: str
     email: EmailStr
+    timezone: str
 
     model_config = ConfigDict(from_attributes=True)
 
@@ -490,3 +504,509 @@ class AchievementSummary(BaseModel):
     model_config = ConfigDict(
         from_attributes=True
     )
+
+
+
+# ==============================
+# MODULE 13: NUTRITION & MEAL SCHEMAS
+# ==============================
+
+MealType = Literal[
+    "Breakfast",
+    "Lunch",
+    "Dinner",
+    "Snacks"
+]
+
+
+# ==============================
+# CREATE MEAL
+# ==============================
+
+class MealCreate(BaseModel):
+
+    meal_type: MealType
+
+    food_name: str = Field(
+        min_length=2,
+        max_length=150
+    )
+
+    calories: float = Field(
+        ge=0
+    )
+
+    protein: float = Field(
+        default=0,
+        ge=0
+    )
+
+    carbs: float = Field(
+        default=0,
+        ge=0
+    )
+
+    fats: float = Field(
+        default=0,
+        ge=0
+    )
+
+
+# ==============================
+# UPDATE MEAL
+# ==============================
+
+class MealUpdate(BaseModel):
+
+    meal_type: MealType | None = None
+
+    food_name: str | None = Field(
+        default=None,
+        min_length=2,
+        max_length=150
+    )
+
+    calories: float | None = Field(
+        default=None,
+        ge=0
+    )
+
+    protein: float | None = Field(
+        default=None,
+        ge=0
+    )
+
+    carbs: float | None = Field(
+        default=None,
+        ge=0
+    )
+
+    fats: float | None = Field(
+        default=None,
+        ge=0
+    )
+
+    @model_validator(mode="after")
+    def validate_update(self):
+
+        if not self.model_fields_set:
+            raise ValueError(
+                "At least one field must be provided"
+            )
+
+        for field in self.model_fields_set:
+            if getattr(self, field) is None:
+                raise ValueError(
+                    f"{field} cannot be null"
+                )
+
+        return self
+
+
+# ==============================
+# MEAL RESPONSE
+# ==============================
+
+class MealResponse(BaseModel):
+
+    id: int
+    user_id: int
+
+    meal_type: MealType
+    food_name: str
+
+    calories: float
+    protein: float
+    carbs: float
+    fats: float
+
+    created_at: datetime
+
+    model_config = ConfigDict(
+        from_attributes=True
+    )
+
+
+
+
+# ==============================
+# MODULE 14: WATER INTAKE TRACKER
+# ==============================
+
+# CREATE WATER RECORD
+
+class WaterTrackingCreate(BaseModel):
+
+    quantity: int = Field(
+        gt=0,
+        le=10000
+    )
+
+    date: Date
+
+
+# UPDATE WATER RECORD
+
+class WaterTrackingUpdate(BaseModel):
+
+    quantity: int | None = Field(
+        default=None,
+        gt=0,
+        le=10000
+    )
+
+    date: Date | None = None
+
+    @model_validator(mode="after")
+    def validate_update(self):
+
+        if not self.model_fields_set:
+            raise ValueError(
+                "At least one field must be provided"
+            )
+
+        for field in self.model_fields_set:
+            if getattr(self, field) is None:
+                raise ValueError(
+                    f"{field} cannot be null"
+                )
+
+        return self
+
+
+# WATER TRACKING RESPONSE
+
+class WaterTrackingResponse(BaseModel):
+
+    id: int
+    user_id: int
+    quantity: int
+    date: Date
+
+    model_config = ConfigDict(
+        from_attributes=True
+    )
+
+
+# DAILY WATER SUMMARY
+
+class WaterDailySummary(BaseModel):
+
+    date: Date
+    total_water: int
+    daily_goal: int
+    remaining_water: int
+    progress_percentage: float
+
+
+# ==========================================
+# MODULE 17: HEALTH INTEGRATION SCHEMAS
+# ==========================================
+
+HealthProvider = Literal[
+    "HEALTH_CONNECT",
+    "APPLE_HEALTH"
+]
+
+
+HealthIntegrationStatus = Literal[
+    "CONNECTED",
+    "DISCONNECTED",
+    "PERMISSION_DENIED"
+]
+
+
+ActivitySyncStatus = Literal[
+    "PENDING",
+    "SUCCESS",
+    "FAILED",
+    "PARTIAL"
+]
+
+
+# REGISTER HEALTH PROVIDER CONNECTION
+
+class HealthIntegrationConnect(BaseModel):
+
+    provider: HealthProvider
+
+
+# HEALTH INTEGRATION RESPONSE
+
+class HealthIntegrationResponse(BaseModel):
+
+    id: int
+    user_id: int
+    provider: HealthProvider
+    status: HealthIntegrationStatus
+
+    connected_at: datetime | None
+    last_sync_at: datetime | None
+
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(
+        from_attributes=True
+    )
+
+
+# DAILY IMPORTED ACTIVITY RESPONSE
+
+class DailyActivityResponse(BaseModel):
+
+    id: int
+    user_id: int
+    provider: HealthProvider
+    activity_date: Date
+
+    steps: int
+    active_minutes: int
+    calories_burned: float
+    distance_meters: float
+
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(
+        from_attributes=True
+    )
+
+
+# ACTIVITY SYNCHRONIZATION RESPONSE
+
+class ActivitySyncResponse(BaseModel):
+
+    id: int
+    user_id: int
+    provider: HealthProvider
+    status: ActivitySyncStatus
+
+    records_synced: int
+    started_at: datetime
+    completed_at: datetime | None
+    error_message: str | None
+
+    model_config = ConfigDict(
+        from_attributes=True
+    )
+
+
+
+# ==========================================
+# MODULE 17: HEALTH ACTIVITY SYNC REQUESTS
+# ==========================================
+
+class DailyActivityImport(BaseModel):
+
+    activity_date: Date
+
+    steps: int = Field(
+        default=0,
+        ge=0
+    )
+
+    active_minutes: int = Field(
+        default=0,
+        ge=0
+    )
+
+    calories_burned: float = Field(
+        default=0,
+        ge=0
+    )
+
+    distance_meters: float = Field(
+        default=0,
+        ge=0
+    )
+
+
+class ActivitySyncRequest(BaseModel):
+
+    provider: HealthProvider
+
+    activities: list[DailyActivityImport] = Field(
+        min_length=1,
+        max_length=366
+    )
+
+    @model_validator(mode="after")
+    def validate_unique_activity_dates(self):
+
+        activity_dates = [
+            activity.activity_date
+            for activity in self.activities
+        ]
+
+        if len(activity_dates) != len(set(activity_dates)):
+            raise ValueError(
+                "Duplicate activity dates are not allowed"
+            )
+
+        return self
+
+
+
+# ==========================================
+# MODULE 19: REMINDER SCHEMAS
+# ==========================================
+
+ReminderType = Literal[
+    "WORKOUT",
+    "MEAL",
+    "WATER"
+]
+
+ReminderWeekday = Literal[
+    "MON",
+    "TUE",
+    "WED",
+    "THU",
+    "FRI",
+    "SAT",
+    "SUN"
+]
+
+
+class ReminderCreate(BaseModel):
+
+    reminder_type: ReminderType
+
+    title: str = Field(
+        min_length=1,
+        max_length=150
+    )
+
+    message: str = Field(
+        min_length=1,
+        max_length=500
+    )
+
+    reminder_time: time
+
+    repeat_days: list[ReminderWeekday] = Field(
+        min_length=1,
+        max_length=7
+    )
+
+    start_date: Date | None = None
+
+    end_date: Date | None = None
+
+    is_enabled: bool = True
+
+    @model_validator(mode="after")
+    def validate_reminder_dates(self):
+
+        if (
+            self.start_date is not None
+            and self.end_date is not None
+            and self.end_date < self.start_date
+        ):
+            raise ValueError(
+                "End date cannot be earlier than start date"
+            )
+
+        if len(self.repeat_days) != len(set(self.repeat_days)):
+            raise ValueError(
+                "Duplicate weekdays are not allowed"
+            )
+
+        return self
+
+
+class ReminderUpdate(BaseModel):
+
+    reminder_type: ReminderType | None = None
+
+    title: str | None = Field(
+        default=None,
+        min_length=1,
+        max_length=150
+    )
+
+    message: str | None = Field(
+        default=None,
+        min_length=1,
+        max_length=500
+    )
+
+    reminder_time: time | None = None
+
+    repeat_days: list[ReminderWeekday] | None = Field(
+        default=None,
+        min_length=1,
+        max_length=7
+    )
+
+    start_date: Date | None = None
+
+    end_date: Date | None = None
+
+    is_enabled: bool | None = None
+
+    @model_validator(mode="after")
+    def validate_reminder_update(self):
+
+        if (
+            self.start_date is not None
+            and self.end_date is not None
+            and self.end_date < self.start_date
+        ):
+            raise ValueError(
+                "End date cannot be earlier than start date"
+            )
+
+        if (
+            self.repeat_days is not None
+            and len(self.repeat_days) != len(set(self.repeat_days))
+        ):
+            raise ValueError(
+                "Duplicate weekdays are not allowed"
+            )
+
+        return self
+
+
+class ReminderResponse(BaseModel):
+
+    id: int
+    user_id: int
+
+    reminder_type: ReminderType
+
+    title: str
+    message: str
+
+    reminder_time: time
+
+    repeat_days: list[ReminderWeekday]
+
+    start_date: Date | None = None
+    end_date: Date | None = None
+
+    is_enabled: bool
+
+    last_triggered_at: datetime | None = None
+
+    created_at: datetime
+    updated_at: datetime
+
+    model_config = ConfigDict(
+        from_attributes=True
+    )
+
+    @field_validator("repeat_days", mode="before")
+    @classmethod
+    def convert_repeat_days(cls, value):
+
+        if isinstance(value, str):
+            return [
+                day.strip()
+                for day in value.split(",")
+                if day.strip()
+            ]
+
+        return value
+

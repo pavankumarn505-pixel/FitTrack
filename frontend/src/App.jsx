@@ -1,3 +1,4 @@
+﻿
 import {
   BrowserRouter,
   Routes,
@@ -18,6 +19,9 @@ import WorkoutPlanner from "./pages/WorkoutPlanner";
 import ExerciseLibrary from "./pages/ExerciseLibrary";
 import Streaks from "./pages/Streaks";
 import Achievements from "./pages/Achievements";
+import MealTracking from "./pages/MealTracking";
+import WaterTracking from "./pages/WaterTracking";
+import HealthIntegration from "./pages/HealthIntegration";
 
 import "./App.css";
 
@@ -149,7 +153,36 @@ function App() {
           }
         />
 
-        {/* Invalid Routes */}
+        {/* Nutrition & Meal Tracking */}
+        <Route
+          path="/meals"
+          element={
+            <ProtectedRoute>
+              <MealTracking />
+            </ProtectedRoute>
+          }
+        />
+
+                {/* Water Tracking */}
+        <Route
+          path="/water"
+          element={
+            <ProtectedRoute>
+              <WaterTracking />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Health Integrations */}
+       <Route
+         path="/health-integrations"
+         element={
+           <ProtectedRoute>
+             <HealthIntegration />
+           </ProtectedRoute>
+         }
+       />
+       {/* Invalid Routes */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
@@ -157,3 +190,4 @@ function App() {
 }
 
 export default App;
+

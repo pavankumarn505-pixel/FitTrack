@@ -70,7 +70,8 @@ def register_user(
     new_user = User(
         username=username,
         email=email,
-        hashed_password=hashed_password
+        hashed_password=hashed_password,
+        timezone=user_data.timezone
     )
 
     try:

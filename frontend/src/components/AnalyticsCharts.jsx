@@ -1,5 +1,4 @@
-
-import {
+﻿import {
   ResponsiveContainer,
   BarChart,
   Bar,
@@ -23,7 +22,10 @@ function formatDate(dateString) {
   });
 }
 
-function AnalyticsCharts({ dailyData = [] }) {
+function AnalyticsCharts({
+  dailyData = [],
+  periodLabel = "Weekly",
+}) {
   const chartData = dailyData.map((item) => ({
     date: formatDate(item.date),
     workouts: item.total_workouts || 0,
@@ -31,18 +33,22 @@ function AnalyticsCharts({ dailyData = [] }) {
     duration: item.total_duration || 0,
   }));
 
+  const hasData = chartData.some(
+    (item) => item.workouts > 0 || item.calories > 0 || item.duration > 0
+  );
+
   return (
     <div className="analytics-charts">
       <section className="analytics-chart-card">
         <div className="analytics-chart-heading">
           <div>
-            <h3>Weekly Workout Activity</h3>
+            <h3>{periodLabel} Workout Activity</h3>
             <p>Number of workouts completed each day</p>
           </div>
         </div>
 
         <div className="analytics-chart">
-          {chartData.length > 0 ? (
+          {hasData ? (
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -60,7 +66,7 @@ function AnalyticsCharts({ dailyData = [] }) {
             </ResponsiveContainer>
           ) : (
             <p className="analytics-empty">
-              No workout data available.
+              No workout data available for this period.
             </p>
           )}
         </div>
@@ -75,7 +81,7 @@ function AnalyticsCharts({ dailyData = [] }) {
         </div>
 
         <div className="analytics-chart">
-          {chartData.length > 0 ? (
+          {hasData ? (
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -101,7 +107,7 @@ function AnalyticsCharts({ dailyData = [] }) {
         </div>
       </section>
 
-      <section className="analytics-chart-card">
+      <section className="analytics-chart-card analytics-duration-card">
         <div className="analytics-chart-heading">
           <div>
             <h3>Workout Duration</h3>
@@ -110,7 +116,7 @@ function AnalyticsCharts({ dailyData = [] }) {
         </div>
 
         <div className="analytics-chart">
-          {chartData.length > 0 ? (
+          {hasData ? (
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />

@@ -19,6 +19,10 @@ import {
   Trophy,
   Clock3,
   Award,
+  Utensils,
+  Droplets,
+  Sparkles
+
 } from "lucide-react";
 
 import api from "../api/axios";
@@ -74,7 +78,7 @@ const formatNumber = (value) =>
   Number(value || 0).toLocaleString();
 
 const formatDate = (value) => {
-  if (!value) return "—";
+  if (!value) return "â€”";
 
   const parsed = new Date(
     `${value.toString().slice(0, 10)}T00:00:00`
@@ -246,6 +250,11 @@ function Dashboard() {
   const [dashboardLoading, setDashboardLoading] = useState(true);
   const [dashboardError, setDashboardError] = useState("");
 
+  // AI WORKOUT SUGGESTIONS
+  const [aiSuggestions, setAiSuggestions] = useState(null);
+  const [aiSuggestionsLoading, setAiSuggestionsLoading] = useState(true);
+  const [aiSuggestionsError, setAiSuggestionsError] = useState("");
+
   // =====================================
   // FETCH AUTHENTICATED USER
   // =====================================
@@ -343,6 +352,38 @@ function Dashboard() {
   }, []);
 
   // =====================================
+  // FETCH AI WORKOUT SUGGESTIONS
+  // =====================================
+
+  useEffect(() => {
+    const fetchAISuggestions = async () => {
+      try {
+        const response = await api.get("/ai-suggestions/");
+
+        setAiSuggestions(response.data);
+        setAiSuggestionsError("");
+      } catch (error) {
+        console.error(
+          "Unable to fetch AI workout suggestions:",
+          error
+        );
+
+        setAiSuggestionsError(
+          "Unable to load personalized workout suggestions."
+        );
+      } finally {
+        setAiSuggestionsLoading(false);
+      }
+    };
+
+    if (localStorage.getItem("access_token")) {
+      fetchAISuggestions();
+    } else {
+      setAiSuggestionsLoading(false);
+    }
+  }, []);
+
+  // =====================================
   // LOGOUT
   // =====================================
 
@@ -378,6 +419,14 @@ function Dashboard() {
 
   const openAchievements = () =>
     navigate("/achievements");
+
+  const openMealTracking = () =>
+    navigate("/meals");
+
+  const openHealthIntegrations = () => navigate("/health-integrations");
+
+  const openWaterTracking = () =>
+    navigate("/water");
 
   const handleCardKeyDown = (event, action) => {
     if (event.key === "Enter" || event.key === " ") {
@@ -651,6 +700,223 @@ function Dashboard() {
         )}
 
         {/* ================================= */}
+        {/* AI WORKOUT SUGGESTIONS */}
+        {/* ================================= */}
+
+        <section style={panelStyle}>
+
+          <h2 style={sectionTitleStyle}>
+            <Sparkles
+              size={22}
+              style={{
+                verticalAlign: "middle",
+                marginRight: "8px",
+                color: "#a78bfa",
+              }}
+            />
+            AI Workout Suggestions
+          </h2>
+
+          <p style={{ color: "#94a3b8" }}>
+            Personalized exercise recommendations based on your
+            workout history and fitness activity.
+          </p>
+
+          {aiSuggestionsLoading ? (
+            <p>Generating personalized workout suggestions...</p>
+          ) : aiSuggestionsError ? (
+            <p style={{ color: "#ef4444" }}>
+              {aiSuggestionsError}
+            </p>
+          ) : aiSuggestions ? (
+            <>
+              <div style={statsGridStyle}>
+
+                <div style={miniStatStyle}>
+                  <Flame color="#f59e0b" size={20} />
+                  <p>Current Streak</p>
+                  <h2>{aiSuggestions.current_streak ?? 0} Days</h2>
+                </div>
+
+                <div style={miniStatStyle}>
+                  <Dumbbell color="#10b981" size={20} />
+                  <p>Workouts Analyzed</p>
+                  <h2>
+                    {aiSuggestions.workout_history?.total_workouts ?? 0}
+                  </h2>
+                </div>
+
+                <div style={miniStatStyle}>
+                  <Target color="#60a5fa" size={20} />
+                  <p>Recommendations</p>
+                  <h2>
+                    {aiSuggestions.total_recommendations ?? 0}
+                  </h2>
+                </div>
+
+              </div>
+
+              <div style={{ marginBottom: "20px" }}>
+                <p style={{ color: "#94a3b8", fontSize: "13px" }}>
+                  Recommendation Type
+                </p>
+
+                <strong>
+                  {aiSuggestions.recommendation_type || "Personalized"}
+                </strong>
+              </div>
+
+              <h3 style={{ fontSize: "16px", marginBottom: "12px" }}>
+                Category Scores
+              </h3>
+
+              <div style={statsGridStyle}>
+                {Object.entries(
+                  aiSuggestions.category_scores || {}
+                ).map(([category, score]) => (
+                  <div key={category} style={miniStatStyle}>
+                    <p>{category}</p>
+                    <h2>{score}</h2>
+                  </div>
+                ))}
+              </div>
+
+              <h3 style={{ fontSize: "17px", marginBottom: "15px" }}>
+                Recommended Exercises
+              </h3>
+
+              {aiSuggestions.recommendations?.length > 0 ? (
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns:
+                      "repeat(auto-fit, minmax(230px, 1fr))",
+                    gap: "15px",
+                  }}
+                >
+
+                  {aiSuggestions.recommendations.map(
+                    (recommendation) => (
+                      <div
+                        key={recommendation.exercise_id}
+                        style={{
+                          ...miniStatStyle,
+                          padding: "18px",
+                        }}
+                      >
+
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            alignItems: "center",
+                            gap: "10px",
+                          }}
+                        >
+                          <Dumbbell size={23} color="#10b981" />
+
+                          <span
+                            style={{
+                              fontSize: "11px",
+                              color: "#10b981",
+                              fontWeight: "700",
+                            }}
+                          >
+                            {recommendation.category}
+                          </span>
+                        </div>
+
+                        <h3 style={{ marginTop: "14px", fontSize: "17px" }}>
+                          {recommendation.name}
+                        </h3>
+
+                        <p
+                          style={{
+                            fontSize: "13px",
+                            color: "#94a3b8",
+                            lineHeight: "1.6",
+                          }}
+                        >
+                          {recommendation.description ||
+                            "Recommended exercise for your fitness routine."}
+                        </p>
+
+                        <p style={{ fontSize: "13px" }}>
+                          <Clock3
+                            size={15}
+                            style={{
+                              verticalAlign: "middle",
+                              marginRight: "6px",
+                            }}
+                          />
+                          Duration: {recommendation.duration ?? "?"} minutes
+                        </p>
+
+                        <p style={{ fontSize: "13px" }}>
+                          Recommendation Score:{" "}
+                          <strong>
+                            {recommendation.recommendation_score ?? "?"}
+                          </strong>
+                        </p>
+
+                        {recommendation.reasons?.length > 0 && (
+                          <div
+                            style={{
+                              marginTop: "12px",
+                              paddingTop: "12px",
+                              borderTop:
+                                "1px solid var(--border-color, #29384d)",
+                            }}
+                          >
+                            <strong style={{ fontSize: "13px" }}>
+                              Why this exercise?
+                            </strong>
+
+                            <ul
+                              style={{
+                                paddingLeft: "18px",
+                                color: "#94a3b8",
+                                fontSize: "12px",
+                                lineHeight: "1.7",
+                              }}
+                            >
+                              {recommendation.reasons.map(
+                                (reason, index) => (
+                                  <li key={index}>{reason}</li>
+                                )
+                              )}
+                            </ul>
+                          </div>
+                        )}
+
+                      </div>
+                    )
+                  )}
+
+                </div>
+              ) : (
+                <p>
+                  No exercise recommendations are available right now.
+                </p>
+              )}
+
+              <button
+                className="workout-dashboard-button"
+                onClick={openExerciseLibrary}
+                style={{ marginTop: "20px" }}
+              >
+                Explore Exercise Library
+                <ArrowRight size={16} />
+              </button>
+
+            </>
+          ) : (
+            <p>No personalized workout suggestions available.</p>
+          )}
+
+        </section>
+
+        {/* ================================= */}
         {/* 1. WEEKLY STATISTICS */}
         {/* ================================= */}
 
@@ -671,7 +937,7 @@ function Dashboard() {
 
             <p style={{ color: "#94a3b8" }}>
               {formatDate(weekly?.start_date)}
-              {" — "}
+              {" â€” "}
               {formatDate(weekly?.end_date)}
             </p>
 
@@ -1033,7 +1299,7 @@ function Dashboard() {
                       >
                         Target Value:{" "}
                         <strong style={{ color: "inherit" }}>
-                          {isWeightLoss ? "≤ " : ""}
+                          {isWeightLoss ? "â‰¤ " : ""}
                           {goal.target_value}
                         </strong>
                       </p>
@@ -1181,7 +1447,72 @@ function Dashboard() {
             </button>
           </div>
 
+          {/* Meal Tracking */}
+          <div
+            className="dashboard-card workout-dashboard-card"
+            onClick={openMealTracking}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(event) =>
+              handleCardKeyDown(event, openMealTracking)
+            }
+          >
+            <div className="dashboard-card-icon">
+              <Utensils size={24} />
+            </div>
+
+            <h3>Meal Tracking</h3>
+
+            <p>
+              Record your daily meals, track food intake
+              and monitor your nutrition.
+            </p>
+
+            <button
+              className="workout-dashboard-button"
+              onClick={(event) => {
+                event.stopPropagation();
+                openMealTracking();
+              }}
+            >
+              Track Your Meals <ArrowRight size={16} />
+            </button>
+          </div>
+
+          {/* Water Tracking */}
+          <div
+            className="dashboard-card workout-dashboard-card"
+            onClick={openWaterTracking}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(event) =>
+              handleCardKeyDown(event, openWaterTracking)
+            }
+          >
+            <div className="dashboard-card-icon">
+              <Droplets size={24} />
+            </div>
+
+            <h3>Water Tracking</h3>
+
+            <p>
+              Record your daily water intake, monitor hydration
+              and track your drinking habits.
+            </p>
+
+            <button
+              className="workout-dashboard-button"
+              onClick={(event) => {
+                event.stopPropagation();
+                openWaterTracking();
+              }}
+            >
+              Track Your Water <ArrowRight size={16} />
+            </button>
+          </div>
+
           {/* Exercise Library */}
+
           <div
             className="dashboard-card workout-dashboard-card"
             onClick={openExerciseLibrary}
@@ -1434,23 +1765,37 @@ function Dashboard() {
             </button>
           </div>
 
-          {/* Health Progress */}
-          <div className="dashboard-card">
+          {/* Health Integrations */}
+          <div
+            className="dashboard-card workout-dashboard-card"
+            onClick={openHealthIntegrations}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(event) =>
+              handleCardKeyDown(event, openHealthIntegrations)
+            }
+          >
             <div className="dashboard-card-icon">
               <HeartPulse size={24} />
             </div>
 
-            <h3>Health Progress</h3>
+            <h3>Health Integrations</h3>
 
             <p>
-              Track health information and fitness improvements.
+              Connect supported health providers, manage integrations
+              and synchronize your health activity data.
             </p>
 
-            <span className="coming-soon">
-              Coming Soon
-            </span>
+            <button
+              className="workout-dashboard-button"
+              onClick={(event) => {
+                event.stopPropagation();
+                openHealthIntegrations();
+              }}
+            >
+              Manage Health Integrations <ArrowRight size={16} />
+            </button>
           </div>
-
         </section>
 
         {/* ================================= */}
@@ -1467,14 +1812,14 @@ function Dashboard() {
               <span>Username</span>
 
               <strong>
-                {user?.username || user?.full_name || "—"}
+                {user?.username || user?.full_name || "â€”"}
               </strong>
             </div>
 
             <div>
               <span>Email Address</span>
 
-              <strong>{user?.email || "—"}</strong>
+              <strong>{user?.email || "â€”"}</strong>
             </div>
 
           </div>
@@ -1488,3 +1833,6 @@ function Dashboard() {
 }
 
 export default Dashboard;
+
+
+
